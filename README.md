@@ -1,1 +1,1 @@
-## Curation Challenge
+## 🛍️ One Art Shopping Challenge 🛍️
