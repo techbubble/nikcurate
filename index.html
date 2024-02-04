@@ -129,13 +129,14 @@
 
     function showCuration(username) {
       html = '';
-      document.getElementById('gallery').innerHTML = `<img src="./assets/images/sakura.gif" alt="" style="display:block;width:246px;height:246px;margin:50px auto 0 auto;"" />`;
       let curationIndex = window.curations.findIndex((u) => username == u.username.toLowerCase());
+      if (curationIndex > -1) {
+        document.getElementById('gallery').innerHTML = `<img src="./assets/images/sakura.gif" alt="" style="display:block;width:246px;height:246px;margin:50px auto 0 auto;"" />`;
         fetch(window.curations[curationIndex].report)
         .then((res2) => res2.json())
         .then((json) => {
           window.curations[curationIndex].reportInfo = json;
-          document.getElementById('section1').innerHTML = `<h2>Curation by: <a href='https://x.com/${username}' target='_new'>@${username}</a></h2>`;
+          document.getElementById('section1').innerHTML = `<h3><a href='https://techbubble.github.io/nikcurate?c=${username}' target='_new'>Curation</a> by: <a href='https://x.com/${username}' target='_new'>@${username}</a></h3>`;
           let counter = json.items.length;
           json.items.forEach((item, index) => {
             let img = new Image();
@@ -162,6 +163,8 @@
             img.src = item.nftData.thumbUrl;
           });
         });
+      }
+
 
       }
 
@@ -243,7 +246,17 @@
           }
         });
         document.getElementById('curators').innerHTML = curatorHtml;
+        
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+          get: (searchParams, prop) => searchParams.get(prop),
+        });
+
+        let jumpto = params.c ? params.c.toLowerCase() : '';
+        if (jumpto !== '') {
+          showCuration(jumpto);
+        }
       })()
+
     </script>
     <script type="module">
       // import * as Gallery from './assets/js/gallery.js'
