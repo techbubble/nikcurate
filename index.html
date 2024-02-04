@@ -136,7 +136,7 @@
         .then((res2) => res2.json())
         .then((json) => {
           window.curations[curationIndex].reportInfo = json;
-          document.getElementById('section1').innerHTML = `<h3><a href='https://techbubble.github.io/nikcurate?c=${username}' target='_new'>Curation</a> by: <a href='https://x.com/${username}' target='_new'>@${username}</a></h3>`;
+          document.getElementById('section1').innerHTML = `<h3><a href='https://nikcurate.kalyani.com?c=${username}' target='_new'>Curation</a> by: <a href='https://x.com/${username}' target='_new'>@${username}</a></h3>`;
           let counter = json.items.length;
           json.items.forEach((item, index) => {
             let img = new Image();
