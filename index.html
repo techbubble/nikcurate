@@ -17,6 +17,9 @@
     /> -->
     <title>🛍️ One Art Shopping Challenge 🛍️</title>
     <style>
+      /* https://www.cssscript.com/masonry-grid-layout-flexbox/ */
+
+
       .gallery {
         position: absolute;
         margin: auto;
@@ -45,6 +48,22 @@
       .header-sticky-wrapper h3 {
         margin-right: 30px;
       }
+
+      .infolabel div {
+        text-align: center;
+      }
+
+      .info div {
+        font-family:'Courier New', Courier, monospace;
+        font-weight: bold;
+        font-size: 3em;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      /* img.tilebw {
+        filter: grayscale(100%);
+      } */
     </style>
   </head>
 
@@ -85,6 +104,20 @@
             <div class="col-5" id="section1"></div>
             <div class="col-2" id="section2">#nikcurate<br/><a href="https://docs.google.com/spreadsheets/d/1KF1vkeKWSB0pwEYn5odAnRTN3_JXHBftQJMUkDWec-k/edit?resourcekey#gid=2035489868" target="_new">Scoring Worksheet</a></div>
           </div>
+          <div class="row infolabel" style="margin-top:20px;">
+            <div class="col-2">Budget (0 - 5)</div>
+            <div class="col-2">Harmony (0 - 5)</div>
+            <div class="col-2">Diversity (0 - 5)</div>
+            <div class="col-2">Je ne sais quoi (0 - 5)</div>
+            <div class="col-4">FINAL (0 - 5)</div>
+          </div>
+          <div class="row info" style="margin-bottom:20px;">
+            <div class="col-2" id="info1"></div>
+            <div class="col-2" id="info2"></div>
+            <div class="col-2" id="info3"></div>
+            <div class="col-2" id="info4"></div>
+            <div class="col-4" id="info5"></div>
+          </div>
           <div class="row">
             <div class="col-12">
               <ul class="js-masonry-list" id="gallery"></ul>
@@ -97,34 +130,52 @@
     <script src="assets/js/simple-masonry.min.js"></script>
     <script>
     let html = '';
+    let firstLoad = true;
 
+    function layout(counter) {
+        if (counter % 4 == 0 || counter == 0) {
+          if (firstLoad) {
+            document.getElementById('gallery').innerHTML = html;
+            firstLoad = false;
+          } else {
+            document.getElementById('gallery').innerHTML += html;
+          }
+          html = '';
+          masonry({
+            target: '.js-masonry-list',  
+            column: 4,  
+            columnGap: 0,  
+            rowGap: 0,  
+            responsive: [  
+              {
+                breakpoint: 1024, 
+                column: 3
+              },
+              {
+                breakpoint: 800,
+                column: 2
+              },
+              {
+                breakpoint: 600,
+                column: 1
+              }
+            ]
+          });
+       } 
 
-    function layout() {
-        document.getElementById('gallery').innerHTML = html;
-        masonry({
-          target: '.js-masonry-list',  
-          column: 4,  
-          columnGap: 0,  
-          rowGap: 0,  
-          responsive: [  
-            {
-              breakpoint: 1024, 
-              column: 3
-            },
-            {
-              breakpoint: 800,
-              column: 2
-            },
-            {
-              breakpoint: 600,
-              column: 1
-            }
-          ]
-        });
       }
 
     function itemInfo(curatorIndex, itemIndex) {
       console.log(window.curations[curatorIndex].reportInfo.items[itemIndex]);
+    }
+
+    function showInfo(info) {
+      document.getElementById('info1').innerHTML = info.scores[0];
+      document.getElementById('info2').innerHTML = info.scores[1] == 0 ? '' : info.scores[1];
+      document.getElementById('info3').innerHTML = info.scores[2] == 0 ? '' : info.scores[2];
+      document.getElementById('info4').innerHTML = info.scores[3] == 0 ? '' : info.scores[3];
+      document.getElementById('info5').innerHTML = info.scored ? info.scores[4] : 'To be Scored';
+
     }
 
     function showCuration(username) {
@@ -132,17 +183,19 @@
       let curationIndex = window.curations.findIndex((u) => username == u.username.toLowerCase());
       if (curationIndex > -1) {
         document.getElementById('gallery').innerHTML = `<img src="./assets/images/sakura.gif" alt="" style="display:block;width:246px;height:246px;margin:50px auto 0 auto;"" />`;
+        firstLoad = true;
         fetch(window.curations[curationIndex].report)
         .then((res2) => res2.json())
         .then((json) => {
           window.curations[curationIndex].reportInfo = json;
           document.getElementById('section1').innerHTML = `<h3><a href='https://nikcurate.kalyani.com?c=${username}' target='_new'>Curation</a> by: <a href='https://x.com/${username}' target='_new'>@${username}</a></h3>`;
+          showInfo(window.curations[curationIndex]);
           let counter = json.items.length;
           json.items.forEach((item, index) => {
             let img = new Image();
             img.onerror = () => {
               counter--;
-              if (counter % 4 == 0 || counter == 0) layout();
+              layout(counter);
             }
             img.onload = () => {
               let w = img.width;
@@ -156,9 +209,9 @@
                 useH = 300;
                 useW = w * useH/h;
               }
-              html += `<li class="js-masonry-elm"><a href="${item.nftUrl}" target="_new"><img src="${item.nftData.thumbUrl}" width="${useW}" height="${useH}" alt="${item.text}" /></a></li>`; //onmouseover="javascript:itemInfo(${userIndex},${index});"
+              html += `<li class="js-masonry-elm"><a href="${item.nftUrl}" target="_new"><img class="tilebw" src="${item.nftData.thumbUrl}" width="${useW}" height="${useH}" alt="${item.text}" /></a></li>`; //onmouseover="javascript:itemInfo(${userIndex},${index});"
               counter--;
-              if (counter % 4 == 0 || counter == 0) layout();
+              layout(counter);
             }
             img.src = item.nftData.thumbUrl;
           });
@@ -223,6 +276,7 @@
                     url: cols[11],
                     eth: cols[2],
                     tez: cols[3],
+                    scores: [ cols[4], cols[5], cols[6], cols[7], cols[8]],
                     report: cols[10]
                 });
               }
