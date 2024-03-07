@@ -305,7 +305,7 @@
           let user = curators[userIndex];
           //console.log(counter, userIndex)
           if (user) {
-            curatorHtml += `<img src="${user.profile_image_url.replace('_normal','')}" alt="${curation.username}" height="150" width="150" style="border-bottom: 4px solid ${curation.scored ? '#00ff00;' : '#0000ff'};" onclick="showCuration('${user.username.toLowerCase()}')" />`;
+            curatorHtml += `<img src="${user.profile_image_url.replace('_normal','')}" alt="${curation.username}" height="150" width="150" onclick="showCuration('${user.username.toLowerCase()}')" />`;
           } else {
             console.log('NOT FOUND', curation.username.toLowerCase())
           }
