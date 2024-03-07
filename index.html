@@ -229,7 +229,7 @@
                 useH = 300;
                 useW = w * useH/h;
               }
-              html += `<li class="js-masonry-elm" style="filter:grayscale(100%);"><a href="${item.nftUrl}" target="_new"><img class="tilebw" src="${item.nftData.thumbUrl}" width="${useW}" height="${useH}" alt="${item.text}" /></a></li>`; //onmouseover="javascript:itemInfo(${userIndex},${index});"
+              html += `<li class="js-masonry-elm"><a href="${item.nftUrl}" target="_new"><img class="tilebw" src="${item.nftData.thumbUrl}" width="${useW}" height="${useH}" alt="${item.text}" /></a></li>`; //onmouseover="javascript:itemInfo(${userIndex},${index});"
               counter--;
               layout(counter);
             }
